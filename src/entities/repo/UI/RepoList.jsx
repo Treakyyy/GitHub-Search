@@ -1,23 +1,54 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
+import _ from 'lodash'
 
 function App() {
   const [query, setQuery] = useState('')
   const [repos, setRepos] = useState([])
   const [loading, setLoading] = useState(false)
+  const abortControllerRef = useRef(null)
 
-  const handleSearch = async (e) => {
-    e.preventDefault()
+  const fetchRepos = async (query, controller) => {
     setLoading(true)
     try {
       const response = await fetch(
-        `https://api.github.com/search/repositories?q=${query}`
+        `https://api.github.com/search/repositories?q=${query}`,
+        {
+          signal: controller.signal,
+        }
       )
       const data = await response.json()
       setRepos(data.items)
     } catch (error) {
-      console.error('Error fetching the repositories:', error)
+      if (error.name === 'AbortError') {
+        console.log('Fetch aborted')
+      } else {
+        console.error('Error fetching the repositories:', error)
+      }
     }
     setLoading(false)
+  }
+
+  const throttledFetchRepos = useCallback(
+    _.throttle((query) => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
+      const controller = new AbortController()
+      abortControllerRef.current = controller
+      fetchRepos(query, controller)
+    }, 1000),
+    []
+  )
+
+  const handleInputChange = (e) => {
+    const newQuery = e.target.value
+    setQuery(newQuery)
+    throttledFetchRepos(newQuery)
+  }
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    throttledFetchRepos(query)
   }
 
   return (
@@ -27,7 +58,7 @@ function App() {
         <input
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={handleInputChange}
           placeholder="Enter keyword"
         />
         <button type="submit">Search</button>
