@@ -39,9 +39,16 @@ function App() {
           {repos.map((repo) => (
             <li key={repo.id}>
               <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
-                {repo.name}
-              </a>{' '}
-              by {repo.owner.login}
+                {repo.full_name}
+              </a>
+              <p>Stars: {repo.stargazers_count}</p>
+              <p>Forks: {repo.forks_count}</p>
+              <img
+                src={repo.owner.avatar_url}
+                alt={`${repo.owner.login} avatar`}
+                width={50}
+                height={50}
+              />
             </li>
           ))}
         </ul>
