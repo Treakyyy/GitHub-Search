@@ -1,9 +1,10 @@
 import React, { useCallback, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
+import { Link } from 'react-router-dom'
 import _ from 'lodash'
 import repoStore from '../model/store'
 
-const App = observer(() => {
+const RepoList = observer(() => {
   const abortControllerRef = useRef(null)
 
   const throttledFetchRepos = useCallback(
@@ -18,6 +19,14 @@ const App = observer(() => {
     []
   )
 
+  const handleFavoriteToggle = (repo) => {
+    if (repoStore.favorites.some((favorite) => favorite.id === repo.id)) {
+      repoStore.removeFromFavorites(repo.id)
+    } else {
+      repoStore.addToFavorites(repo)
+    }
+  }
+
   const handleInputChange = (e) => {
     const newQuery = e.target.value
     repoStore.setQuery(newQuery)
@@ -27,14 +36,6 @@ const App = observer(() => {
   const handleSearch = (e) => {
     e.preventDefault()
     throttledFetchRepos(repoStore.query)
-  }
-
-  const handleFavoriteToggle = (repo) => {
-    if (repoStore.favorites.some((favorite) => favorite.id === repo.id)) {
-      repoStore.removeFromFavorites(repo.id)
-    } else {
-      repoStore.addToFavorites(repo)
-    }
   }
 
   return (
@@ -56,13 +57,9 @@ const App = observer(() => {
           <ul>
             {repoStore.repos.map((repo) => (
               <li key={repo.id}>
-                <a
-                  href={repo.html_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <Link to={`/repo/${repo.owner.login}/${repo.name}`}>
                   {repo.full_name}
-                </a>
+                </Link>
                 <p>Stars: {repo.stargazers_count}</p>
                 <p>Forks: {repo.forks_count}</p>
                 <img
@@ -86,13 +83,9 @@ const App = observer(() => {
             <ul>
               {repoStore.favorites.map((repo) => (
                 <li key={repo.id}>
-                  <a
-                    href={repo.html_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <Link to={`/repo/${repo.owner.login}/${repo.name}`}>
                     {repo.full_name}
-                  </a>
+                  </Link>
                   <p>Stars: {repo.stargazers_count}</p>
                   <p>Forks: {repo.forks_count}</p>
                   <img
@@ -114,4 +107,4 @@ const App = observer(() => {
   )
 })
 
-export default App
+export default RepoList

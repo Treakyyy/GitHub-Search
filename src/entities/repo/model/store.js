@@ -5,6 +5,7 @@ class RepoStore {
   repos = [];
   favorites = [];
   loading = false;
+  selectedRepo = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -20,6 +21,10 @@ class RepoStore {
 
   setLoading(loading) {
     this.loading = loading;
+  }
+
+  setSelectedRepo(repo) {
+    this.selectedRepo = repo;
   }
 
   addToFavorites(repo) {
@@ -40,6 +45,18 @@ class RepoStore {
       this.setRepos(data.items);
     } catch (error) {
       console.error('Error fetching the repositories:', error);
+    }
+    this.setLoading(false);
+  }
+
+  async fetchRepoDetails(owner, repoName) {
+    this.setLoading(true);
+    try {
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repoName}`);
+      const data = await response.json();
+      this.setSelectedRepo(data);
+    } catch (error) {
+      console.error('Error fetching the repository details:', error);
     }
     this.setLoading(false);
   }
