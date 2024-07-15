@@ -3,9 +3,9 @@ import RepoDetails from '../../features/repo/UI/RepoDetails'
 
 const RepoPage = () => {
   return (
-    <div>
+    <>
       <RepoDetails />
-    </div>
+    </>
   )
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import FavoriteItem from './FavoriteItem'
+import FavoriteItem from '../FavoriteItem/FavoriteItem'
 import styles from './FavoritesList.module.css'
 
 const FavoritesList = ({ favorites, onRemove }) => {

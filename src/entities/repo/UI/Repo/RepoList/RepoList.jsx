@@ -1,10 +1,10 @@
 import React, { useCallback, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import _ from 'lodash'
-import repoStore from '../model/store'
-import SearchForm from './SearchForm'
-import RepoItem from './RepoItem'
-import FavoritesList from './FavoritesList'
+import repoStore from '../../../model/store'
+import SearchForm from '../../SearchForm/SearchForm'
+import RepoItem from '../RepoItem/RepoItem'
+import FavoritesList from '../../Favorite/FavoriteList/FavoritesList'
 import styles from './RepoList.module.css'
 
 const RepoList = observer(() => {
@@ -56,6 +56,7 @@ const RepoList = observer(() => {
         showFavorites={showFavorites}
         onToggleFavorites={handleToggleFavorites}
       />
+      {repoStore.error && <p className={styles.error}>{repoStore.error}</p>}
       {showFavorites ? (
         <FavoritesList
           favorites={repoStore.favorites}

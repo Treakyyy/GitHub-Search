@@ -1,11 +1,11 @@
 import React from 'react'
-import RepoList from '../../entities/repo/UI/RepoList'
+import RepoList from '../../entities/repo/UI/Repo/RepoList/RepoList'
 
 const HomePage = () => {
   return (
-    <div>
+    <>
       <RepoList />
-    </div>
+    </>
   )
 }
 

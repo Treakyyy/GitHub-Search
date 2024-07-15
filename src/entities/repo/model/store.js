@@ -6,6 +6,7 @@ class RepoStore {
   favorites = [];
   loading = false;
   selectedRepo = null;
+  error = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -27,6 +28,14 @@ class RepoStore {
     this.selectedRepo = repo;
   }
 
+  setError(error) {
+    this.error = error;
+  }
+
+  clearError() {
+    this.error = null;
+  }
+
   addToFavorites(repo) {
     if (!this.favorites.some((favorite) => favorite.id === repo.id)) {
       this.favorites.push(repo);
@@ -39,24 +48,34 @@ class RepoStore {
 
   async fetchRepos(query) {
     this.setLoading(true);
+    this.clearError();
     try {
       const response = await fetch(`https://api.github.com/search/repositories?q=${query}`);
       const data = await response.json();
-      this.setRepos(data.items);
+      if (response.ok) {
+        this.setRepos(data.items);
+      } else {
+        throw new Error(data.message || 'Failed to fetch repositories');
+      }
     } catch (error) {
-      console.error('Error fetching the repositories:', error);
+      this.setError(error.message);
     }
     this.setLoading(false);
   }
 
   async fetchRepoDetails(owner, repoName) {
     this.setLoading(true);
+    this.clearError();
     try {
       const response = await fetch(`https://api.github.com/repos/${owner}/${repoName}`);
       const data = await response.json();
-      this.setSelectedRepo(data);
+      if (response.ok) {
+        this.setSelectedRepo(data);
+      } else {
+        throw new Error(data.message || 'Failed to fetch repository details');
+      }
     } catch (error) {
-      console.error('Error fetching the repository details:', error);
+      this.setError(error.message);
     }
     this.setLoading(false);
   }
@@ -64,3 +83,4 @@ class RepoStore {
 
 const repoStore = new RepoStore();
 export default repoStore;
+

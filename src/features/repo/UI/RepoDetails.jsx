@@ -13,11 +13,17 @@ const RepoDetails = observer(() => {
 
   const repo = repoStore.selectedRepo
 
-  return (
-    <div className={styles.repoDetails}>
-      {repoStore.loading ? (
-        <p>Loading...</p>
-      ) : repo ? (
+  const renderRepoDetails = () => {
+    if (repoStore.loading) {
+      return <p>Loading...</p>
+    }
+
+    if (repoStore.error) {
+      return <p className={styles.error}>{repoStore.error}</p>
+    }
+
+    if (repo) {
+      return (
         <div>
           <h1 className={styles.repoDetails__head_text}>{repo.full_name}</h1>
           <img
@@ -45,11 +51,13 @@ const RepoDetails = observer(() => {
             Go to Repository
           </a>
         </div>
-      ) : (
-        <p>Repository not found</p>
-      )}
-    </div>
-  )
+      )
+    }
+
+    return <p>Repository not found</p>
+  }
+
+  return <div className={styles.repoDetails}>{renderRepoDetails()}</div>
 })
 
 export default RepoDetails
