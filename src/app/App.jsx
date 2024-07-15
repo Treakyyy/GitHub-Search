@@ -1,16 +1,17 @@
 import React from 'react'
 import { Route, Routes, HashRouter } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
-import RepoList from '../entities/repo/UI/RepoList'
-import RepoDetails from '../features/repo/UI/RepoDetails'
+import HomePage from '../pages/HomePage/Homepage'
+import RepoPage from '../pages/RepoPage/RepoPage'
+import './App.css'
 
 const App = observer(() => {
   return (
     <HashRouter>
       <div className="app">
         <Routes>
-          <Route path="/" element={<RepoList />} />
-          <Route path="/repo/:owner/:repoName" element={<RepoDetails />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/repo/:owner/:repoName" element={<RepoPage />} />
         </Routes>
       </div>
     </HashRouter>

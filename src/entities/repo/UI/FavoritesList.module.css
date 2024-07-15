@@ -1,0 +1,16 @@
+.favoritesList_text {
+    color: rgb(150, 158, 164);
+}
+
+.favoritesList_list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.favoritesList{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

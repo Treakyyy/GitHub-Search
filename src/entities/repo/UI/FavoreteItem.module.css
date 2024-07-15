@@ -1,0 +1,50 @@
+.favoriteItem {
+    display: grid;
+    grid-template-columns: repeat(5, 0.7fr);
+    gap: 10px;
+    align-items: center;
+    border: 1px solid rgb(67, 63, 63);
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.favoriteItem_link {
+    color: rgb(150, 158, 164);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.favoriteItem_link:hover {
+    color: rgb(97, 92, 92);
+    transition: 0.3s ease;
+}
+
+.favoriteItem_text {
+    color: rgb(150, 158, 164);
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.favoriteItem_img {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    padding: 0;
+    margin: 0;
+}
+
+.btn {
+    padding: 13px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background-color: rgb(33, 31, 31);
+    color: rgb(150, 158, 164);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.btn:hover {
+    background-color: rgb(67, 63, 63);
+    transition: 0.3s ease;
+}

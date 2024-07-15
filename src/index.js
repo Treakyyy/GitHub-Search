@@ -1,12 +1,19 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './app/App';
+import ReactDOM from 'react-dom';
+import App from '../src/app/App';
+import { configure } from 'mobx';
+import { Provider } from 'mobx-react';
+import repoStore from '../src/app/store';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
+configure({ enforceActions: 'observed' });
+
+const stores = {
+  repoStore,
+};
+
+ReactDOM.render(
+  <Provider {...stores}>
     <App />
-  </React.StrictMode>
+  </Provider>,
+  document.getElementById('root')
 );
-

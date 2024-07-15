@@ -1,20 +1,24 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Link } from 'react-router-dom'
 import _ from 'lodash'
 import repoStore from '../model/store'
+import SearchForm from './SearchForm'
+import RepoItem from './RepoItem'
+import FavoritesList from './FavoritesList'
+import styles from './RepoList.module.css'
 
 const RepoList = observer(() => {
   const abortControllerRef = useRef(null)
+  const [showFavorites, setShowFavorites] = useState(false)
 
   const throttledFetchRepos = useCallback(
-    _.throttle((query) => {
+    _.throttle(async (query) => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort()
       }
       const controller = new AbortController()
       abortControllerRef.current = controller
-      repoStore.fetchRepos(query)
+      await repoStore.fetchRepos(query)
     }, 1000),
     []
   )
@@ -38,70 +42,50 @@ const RepoList = observer(() => {
     throttledFetchRepos(repoStore.query)
   }
 
+  const handleToggleFavorites = () => {
+    setShowFavorites(!showFavorites)
+  }
+
   return (
-    <div>
-      <h1>GitHub Repository Search</h1>
-      <form onSubmit={handleSearch}>
-        <input
-          type="text"
-          value={repoStore.query}
-          onChange={handleInputChange}
-          placeholder="Enter keyword"
+    <div className={styles.repoList}>
+      <h1 className={styles.repoList_text}>GitHub Repository Search</h1>
+      <SearchForm
+        query={repoStore.query}
+        onInputChange={handleInputChange}
+        onSearch={handleSearch}
+        showFavorites={showFavorites}
+        onToggleFavorites={handleToggleFavorites}
+      />
+      {showFavorites ? (
+        <FavoritesList
+          favorites={repoStore.favorites}
+          onRemove={(id) => repoStore.removeFromFavorites(id)}
         />
-        <button type="submit">Search</button>
-      </form>
-      {repoStore.loading ? (
-        <p>Loading...</p>
       ) : (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <ul>
-            {repoStore.repos.map((repo) => (
-              <li key={repo.id}>
-                <Link to={`/repo/${repo.owner.login}/${repo.name}`}>
-                  {repo.full_name}
-                </Link>
-                <p>Stars: {repo.stargazers_count}</p>
-                <p>Forks: {repo.forks_count}</p>
-                <img
-                  src={repo.owner.avatar_url}
-                  alt={`${repo.owner.login} avatar`}
-                  width={50}
-                  height={50}
-                />
-                <button onClick={() => handleFavoriteToggle(repo)}>
-                  {repoStore.favorites.some(
-                    (favorite) => favorite.id === repo.id
-                  )
-                    ? 'Remove from Favorites'
-                    : 'Add to Favorites'}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <div>
-            <h2>Favorites</h2>
-            <ul>
-              {repoStore.favorites.map((repo) => (
-                <li key={repo.id}>
-                  <Link to={`/repo/${repo.owner.login}/${repo.name}`}>
-                    {repo.full_name}
-                  </Link>
-                  <p>Stars: {repo.stargazers_count}</p>
-                  <p>Forks: {repo.forks_count}</p>
-                  <img
-                    src={repo.owner.avatar_url}
-                    alt={`${repo.owner.login} avatar`}
-                    width={50}
-                    height={50}
-                  />
-                  <button onClick={() => handleFavoriteToggle(repo)}>
-                    Remove from Favorites
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <>
+          {repoStore.loading ? (
+            <p>Loading...</p>
+          ) : (
+            <div>
+              {repoStore.repos && repoStore.repos.length > 0 ? (
+                <ul className={styles.repoList_list}>
+                  {repoStore.repos.map((repo) => (
+                    <RepoItem
+                      key={repo.id}
+                      repo={repo}
+                      isFavorite={repoStore.favorites.some(
+                        (favorite) => favorite.id === repo.id
+                      )}
+                      onToggleFavorite={handleFavoriteToggle}
+                    />
+                  ))}
+                </ul>
+              ) : (
+                <p>No repositories found</p>
+              )}
+            </div>
+          )}
+        </>
       )}
     </div>
   )
