@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styles from './RepoItem.module.css'
+import Button from '../../../../../shared/UI/Button'
 
 const RepoItem = ({ repo, isFavorite, onToggleFavorite }) => {
   return (
@@ -18,9 +19,12 @@ const RepoItem = ({ repo, isFavorite, onToggleFavorite }) => {
         src={repo.owner.avatar_url}
         alt={`${repo.owner.login} avatar`}
       />
-      <button className={styles.btn} onClick={() => onToggleFavorite(repo)}>
+      <Button
+        className={styles.repo_btn}
+        onClick={() => onToggleFavorite(repo)}
+      >
         {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
-      </button>
+      </Button>
     </li>
   )
 }

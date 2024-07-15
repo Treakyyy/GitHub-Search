@@ -15,19 +15,3 @@
     flex-direction: column;
     gap: 25px;
 }
-
-.btn {
-    padding: 13px 10px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    background-color: rgb(33, 31, 31);
-    color: rgb(150, 158, 164);
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.btn:hover {
-    background-color: rgb(67, 63, 63);
-    transition: 0.3s ease;
-}

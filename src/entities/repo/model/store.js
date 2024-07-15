@@ -6,7 +6,9 @@ class RepoStore {
   favorites = [];
   loading = false;
   selectedRepo = null;
-  error = null;
+  error = '';
+
+  abortController = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -32,10 +34,6 @@ class RepoStore {
     this.error = error;
   }
 
-  clearError() {
-    this.error = null;
-  }
-
   addToFavorites(repo) {
     if (!this.favorites.some((favorite) => favorite.id === repo.id)) {
       this.favorites.push(repo);
@@ -48,39 +46,57 @@ class RepoStore {
 
   async fetchRepos(query) {
     this.setLoading(true);
-    this.clearError();
-    try {
-      const response = await fetch(`https://api.github.com/search/repositories?q=${query}`);
-      const data = await response.json();
-      if (response.ok) {
-        this.setRepos(data.items);
-      } else {
-        throw new Error(data.message || 'Failed to fetch repositories');
-      }
-    } catch (error) {
-      this.setError(error.message);
+    this.setError('');
+
+    if (this.abortController) {
+      this.abortController.abort();
     }
-    this.setLoading(false);
+    this.abortController = new AbortController();
+
+    try {
+      const response = await fetch(`https://api.github.com/search/repositories?q=${query}`, {
+        signal: this.abortController.signal,
+      });
+      const data = await response.json();
+      this.setRepos(data.items || []);
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        this.setError('Error fetching the repositories');
+      }
+    } finally {
+      this.setLoading(false);
+    }
   }
 
   async fetchRepoDetails(owner, repoName) {
     this.setLoading(true);
-    this.clearError();
+    this.setError('');
     try {
       const response = await fetch(`https://api.github.com/repos/${owner}/${repoName}`);
       const data = await response.json();
-      if (response.ok) {
-        this.setSelectedRepo(data);
-      } else {
-        throw new Error(data.message || 'Failed to fetch repository details');
-      }
+      this.setSelectedRepo(data);
     } catch (error) {
-      this.setError(error.message);
+      this.setError('Error fetching the repository details');
+    } finally {
+      this.setLoading(false);
     }
-    this.setLoading(false);
+  }
+
+  handleFavoriteToggle(repo) {
+    if (this.favorites.some((favorite) => favorite.id === repo.id)) {
+      this.removeFromFavorites(repo.id);
+    } else {
+      this.addToFavorites(repo);
+    }
+  }
+
+  handleInputChange(query) {
+    this.setQuery(query);
+    this.fetchRepos(query);
   }
 }
 
 const repoStore = new RepoStore();
 export default repoStore;
+
 

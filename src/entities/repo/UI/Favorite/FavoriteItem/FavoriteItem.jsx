@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import styles from './FavoreteItem.module.css'
+import Button from '../../../../../shared/UI/Button'
+import styles from './FavoriteItem.module.css'
 
 const FavoriteItem = ({ repo, onRemove }) => {
   return (
@@ -18,9 +19,7 @@ const FavoriteItem = ({ repo, onRemove }) => {
         src={repo.owner.avatar_url}
         alt={`${repo.owner.login} avatar`}
       />
-      <button className={styles.btn} onClick={() => onRemove(repo.id)}>
-        Remove from Favorites
-      </button>
+      <Button onClick={() => onRemove(repo.id)}>Remove from Favorites</Button>
     </li>
   )
 }

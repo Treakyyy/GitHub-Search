@@ -1,5 +1,6 @@
 import React from 'react'
 import styles from './SearchForm.module.css'
+import Button from '../../../../shared/UI/Button'
 
 const SearchForm = ({
   query,
@@ -12,18 +13,18 @@ const SearchForm = ({
     <div>
       <form className={styles.form} onSubmit={onSearch}>
         <input
-          className={styles.input}
+          className={styles.form_input}
           type="text"
           value={query}
           onChange={onInputChange}
           placeholder="Enter keyword"
         />
-        <button className={styles.btn} type="submit">
+        <Button className={styles.form_btn} type="submit">
           Search
-        </button>
-        <button className={styles.btn} onClick={onToggleFavorites}>
+        </Button>
+        <Button className={styles.form_btn} onClick={onToggleFavorites}>
           {showFavorites ? 'Show Search Results' : 'Show Favorites'}
-        </button>
+        </Button>
       </form>
     </div>
   )

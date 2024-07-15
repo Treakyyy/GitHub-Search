@@ -1,6 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import _ from 'lodash'
 import repoStore from '../../../model/store'
 import SearchForm from '../../SearchForm/SearchForm'
 import RepoItem from '../RepoItem/RepoItem'
@@ -8,39 +7,7 @@ import FavoritesList from '../../Favorite/FavoriteList/FavoritesList'
 import styles from './RepoList.module.css'
 
 const RepoList = observer(() => {
-  const abortControllerRef = useRef(null)
   const [showFavorites, setShowFavorites] = useState(false)
-
-  const throttledFetchRepos = useCallback(
-    _.throttle(async (query) => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort()
-      }
-      const controller = new AbortController()
-      abortControllerRef.current = controller
-      await repoStore.fetchRepos(query)
-    }, 1000),
-    []
-  )
-
-  const handleFavoriteToggle = (repo) => {
-    if (repoStore.favorites.some((favorite) => favorite.id === repo.id)) {
-      repoStore.removeFromFavorites(repo.id)
-    } else {
-      repoStore.addToFavorites(repo)
-    }
-  }
-
-  const handleInputChange = (e) => {
-    const newQuery = e.target.value
-    repoStore.setQuery(newQuery)
-    throttledFetchRepos(newQuery)
-  }
-
-  const handleSearch = (e) => {
-    e.preventDefault()
-    throttledFetchRepos(repoStore.query)
-  }
 
   const handleToggleFavorites = () => {
     setShowFavorites(!showFavorites)
@@ -51,8 +18,11 @@ const RepoList = observer(() => {
       <h1 className={styles.repoList_text}>GitHub Repository Search</h1>
       <SearchForm
         query={repoStore.query}
-        onInputChange={handleInputChange}
-        onSearch={handleSearch}
+        onInputChange={(e) => repoStore.handleInputChange(e.target.value)}
+        onSearch={(e) => {
+          e.preventDefault()
+          repoStore.fetchRepos(repoStore.query)
+        }}
         showFavorites={showFavorites}
         onToggleFavorites={handleToggleFavorites}
       />
@@ -68,7 +38,7 @@ const RepoList = observer(() => {
             <p>Loading...</p>
           ) : (
             <div>
-              {repoStore.repos && repoStore.repos.length > 0 ? (
+              {repoStore.repos.length > 0 ? (
                 <ul className={styles.repoList_list}>
                   {repoStore.repos.map((repo) => (
                     <RepoItem
@@ -77,7 +47,9 @@ const RepoList = observer(() => {
                       isFavorite={repoStore.favorites.some(
                         (favorite) => favorite.id === repo.id
                       )}
-                      onToggleFavorite={handleFavoriteToggle}
+                      onToggleFavorite={() =>
+                        repoStore.handleFavoriteToggle(repo)
+                      }
                     />
                   ))}
                 </ul>
