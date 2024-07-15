@@ -1,6 +1,6 @@
 .repo {
     display: grid;
-    grid-template-columns: repeat(5, 0.7fr);
+    grid-template-columns: repeat(6, 0.7fr);
     gap: 10px;
     align-items: center;
     border: 1px solid rgb(67, 63, 63);

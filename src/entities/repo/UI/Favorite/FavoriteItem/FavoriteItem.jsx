@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import Button from '../../../../../shared/UI/Button'
+import Button from '../../../../../shared/UI/Button/Button'
 import styles from './FavoriteItem.module.css'
 
 const FavoriteItem = ({ repo, onRemove }) => {

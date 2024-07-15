@@ -1,7 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styles from './RepoItem.module.css'
-import Button from '../../../../../shared/UI/Button'
+import Button from '../../../../../shared/UI/Button/Button'
+import CopyButton from '../../../../../shared/UI/Button/CopyButton'
 
 const RepoItem = ({ repo, isFavorite, onToggleFavorite }) => {
   return (
@@ -25,6 +26,7 @@ const RepoItem = ({ repo, isFavorite, onToggleFavorite }) => {
       >
         {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
       </Button>
+      <CopyButton text={repo.full_name} />
     </li>
   )
 }

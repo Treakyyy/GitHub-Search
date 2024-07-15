@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './SearchForm.module.css'
-import Button from '../../../../shared/UI/Button'
+import Button from '../../../../shared/UI/Button/Button'
 
 const SearchForm = ({
   query,
